@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Halifax Explosion</title>
+    <script src="main.js"></script>
+    <script src="sound.js"></script>
+    <script src="morse.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #4b9fd6;
+      }
+      #outer {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      /* img.pixel-art {
+        image-rendering: pixelated;
+        height: 100vh;
+      } */
+
+      #msg {
+        padding-top: 20px;
+        font-family: monospace;
+        font-size: 23px;
+        font-weight: bold;
+      }
+
+      #key {
+        width: 294px;
+        font-family: monospace;
+        font-size: 25px;
+        font-weight: bold;
+        padding: 20px;
+      }
+      /* #msg {
+        position: fixed;
+        top: 45vh;
+        left: 7vw;
+        height: 70vh;
+        font-family: monospace;
+        font-size: 23px;
+        font-weight: bold;
+        transform-origin: bottom;
+        white-space: preserve;
+        word-wrap: break-word;
+        width: 42vw;
+        overflow: scroll;
+        transform: perspective(1000px) rotateX(16deg) translateY(-163px);
+      } */
+    </style>
+  </head>
+  <body>
+    <div id="outer">
+      <div>
+        <img src="title.png" style="width: 900px" />
+        <div style="width: 900px; display: flex">
+          <div>
+            <!-- <img src="paper.png" alt="Pixel Art" class="pixel-art" /> -->
+            <img id="imgUp" src="up.png" style="width: 100%" />
+            <img
+              id="imgDown"
+              src="down.png"
+              style="width: 100%; display: none"
+            />
+            <div id="msg"></div>
+          </div>
+          <div>
+            <table id="key">
+              <tr></tr>
+              <tr>
+                <td>A .-</td>
+                <td>N -.</td>
+              </tr>
+              <tr>
+                <td>B -...</td>
+                <td>O ---</td>
+              </tr>
+              <tr>
+                <td>C -.-.</td>
+                <td>P .--.</td>
+              </tr>
+              <tr>
+                <td>D -..</td>
+                <td>Q --.-</td>
+              </tr>
+              <tr>
+                <td>E .</td>
+                <td>R .-.</td>
+              </tr>
+              <tr>
+                <td>F ..-.</td>
+                <td>S ...</td>
+              </tr>
+              <tr>
+                <td>G --.</td>
+                <td>T -</td>
+              </tr>
+              <tr>
+                <td>H ....</td>
+                <td>U ..-</td>
+              </tr>
+              <tr>
+                <td>I ..</td>
+                <td>V ...-</td>
+              </tr>
+              <tr>
+                <td>J .---</td>
+                <td>W .--</td>
+              </tr>
+              <tr>
+                <td>K -.-</td>
+                <td>X -..-</td>
+              </tr>
+              <tr>
+                <td>L .-..</td>
+                <td>Y -.--</td>
+              </tr>
+              <tr>
+                <td>M --</td>
+                <td>Z --..</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
