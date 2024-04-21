@@ -126,11 +126,11 @@ function playMsg(code, i, shortPause) {
   jitter = Math.random(10) - 5;
 
   if (shortPause) {
-    setTimeout(playMsg.bind(this, code, i, false), timing["."] + jitter);
-  } else if (char === "." || char === "-") {
+    setTimeout(playMsg.bind(this, code, i, false), timing["⋅"] + jitter);
+  } else if (char === "⋅" || char === "-") {
     lineText += char;
     startBeep();
-    shortPause = nextChar === "." || nextChar === "-";
+    shortPause = nextChar === "⋅" || nextChar === "-";
     setTimeout(
       playMsg.bind(this, code, i + 1, shortPause),
       timing[char] + jitter
