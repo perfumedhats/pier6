@@ -9,54 +9,54 @@ function invertObject(obj) {
 }
 
 encode = {
-  a: ".-",
-  b: "-...",
-  c: "-.-.",
-  d: "-..",
-  e: ".",
-  f: "..-.",
-  g: "--.",
-  h: "....",
-  i: "..",
-  j: ".---",
-  k: "-.-",
-  l: ".-..",
+  a: "⋅-",
+  b: "-⋅⋅⋅",
+  c: "-⋅-⋅",
+  d: "-⋅⋅",
+  e: "⋅",
+  f: "⋅⋅-⋅",
+  g: "--⋅",
+  h: "⋅⋅⋅⋅",
+  i: "⋅⋅",
+  j: "⋅---",
+  k: "-⋅-",
+  l: "⋅-⋅⋅",
   m: "--",
-  n: "-.",
+  n: "-⋅",
   o: "---",
-  p: ".--.",
-  q: "--.-",
-  r: ".-.",
-  s: "...",
+  p: "⋅--⋅",
+  q: "--⋅-",
+  r: "⋅-⋅",
+  s: "⋅⋅⋅",
   t: "-",
-  u: "..-",
-  v: "...-",
-  w: ".--",
-  x: "-..-",
-  y: "-.--",
-  z: "--..",
-  0: ".----",
-  1: "..---",
-  2: "...--",
-  3: "....-",
-  4: ".....",
-  5: "-....",
-  6: "--...",
-  7: "---..",
-  8: "----.",
+  u: "⋅⋅-",
+  v: "⋅⋅⋅-",
+  w: "⋅--",
+  x: "-⋅⋅-",
+  y: "-⋅--",
+  z: "--⋅⋅",
+  0: "⋅----",
+  1: "⋅⋅---",
+  2: "⋅⋅⋅--",
+  3: "⋅⋅⋅⋅-",
+  4: "⋅⋅⋅⋅⋅",
+  5: "-⋅⋅⋅⋅",
+  6: "--⋅⋅⋅",
+  7: "---⋅⋅",
+  8: "----⋅",
   9: "-----",
-  ".": ".-.-.-",
-  ",": "--..--",
-  "?": "..--..",
-  "'": ".----.",
-  "⌫": "........",
+  "⋅": "⋅-⋅-⋅-",
+  ",": "--⋅⋅--",
+  "?": "⋅⋅--⋅⋅",
+  "'": "⋅----⋅",
+  "⌫": "⋅⋅⋅⋅⋅⋅⋅⋅",
   " ": " ",
   "/": "/",
 };
 
 const dit = 60;
 const timing = {
-  ".": dit,
+  "⋅": dit,
   "-": dit * 3,
   " ": dit * 3,
   "/": dit * 7,
@@ -65,17 +65,21 @@ const timing = {
 decode = invertObject(encode);
 
 function toEnglish(callsign, message) {
+  // Prevent rendering the in-progress character.
+  // The message can have a ' ' appended to prevent this.
+  message = message.replace(/[.-]+$/, "");
+
   return (
     callsign +
     ": " +
     message
       .split("/")
-      .map(function (word) {
-        return word
+      .map((word) =>
+        word
           .split(" ")
           .map((x) => (decode[x] === undefined ? x : decode[x]))
-          .join("");
-      })
+          .join("")
+      )
       .join(" ")
       .toUpperCase()
   );
@@ -84,25 +88,52 @@ function toEnglish(callsign, message) {
 const average = (array) =>
   array.length ? array.reduce((a, b) => a + b) / array.length : null;
 
+function median(array) {
+  array = array.sort((a, b) => a - b);
+
+  const midpoint = Math.floor(array.length / 2);
+
+  return array.length % 2
+    ? array[midpoint]
+    : (array[midpoint - 1] + array[midpoint]) / 2;
+}
+
+function kmeans(array) {
+  var cluster0 = [];
+  var cluster1 = [];
+  var centroid0 = Math.min(...array);
+  var centroid1 = Math.max(...array);
+
+  for (iterations = 0; iterations < 5; iterations++) {
+    for (i = 0; i < array.length; i++) {
+      x = array[i];
+      if (Math.abs(x - centroid0) < Math.abs(x - centroid1)) {
+        cluster0.push(x);
+      } else {
+        cluster1.push(x);
+      }
+    }
+    centroid0 = average(cluster0);
+    centroid1 = average(cluster1);
+  }
+
+  return [centroid0, centroid1];
+}
+
 translate = function (keyEvents) {
-  // Everything below the mean is a dot, everything above the mean is a dash.
-  // This assumes a roughly equal distribution of dots and dashes, and should be replaced with
-  // a better method of 1d clustering.
-  mean = average(keyEvents.filter((x) => x.down).map((x) => x.duration));
-  dotLength = average(
-    keyEvents.filter((x) => x.down && x.duration < mean).map((x) => x.duration)
-  );
-  dashLength = average(
-    keyEvents.filter((x) => x.down && x.duration > mean).map((x) => x.duration)
+  var [dotLength, dashLength] = kmeans(
+    keyEvents.filter((x) => x.down).map((x) => x.duration)
   );
 
-  if (dotLength === null || dashLength === null) "";
-
-  // In the event that there are far more dots than dashes, the dashLength could be based on dots, not dashes,
-  // so overwrite it
-  if (dashLength < 2 * dotLength) {
-    dotLength = 60;
-    dashLength = 3 * dotLength;
+  if (dotLength === null && dashLength === null) return "";
+  if (dotLength === null) {
+    dotLength = dashLength / 3;
+  }
+  if (dashLength === null) {
+    dashLength = dotLength * 3;
+  }
+  if (dashLength < dotLength * 2) {
+    dashLength = dotLength * 3;
   }
 
   // The space between a word should be 7 dashes, or 3 dots.
@@ -110,21 +141,20 @@ translate = function (keyEvents) {
   longPauseLength = average([dotLength * 7, dashLength * (7 / 3)]);
   pauseDemarcation = average([dotLength, longPauseLength]);
 
-  // The space between letters
-
   text = keyEvents
     .map(function (x) {
+      var isDit =
+        Math.abs(dotLength - x.duration) < Math.abs(dashLength - x.duration);
       if (x.down) {
-        return x.duration < mean ? "." : "-";
+        return isDit ? "⋅" : "-";
       } else {
-        return x.duration < mean
-          ? ""
-          : x.duration < longPauseLength
-          ? " "
-          : "/";
+        return isDit ? "" : x.duration < longPauseLength ? " " : "/";
       }
     })
     .join("");
+
+  // Add a space so in-progress characters will be rendered
+  text += " ";
 
   return toEnglish("Coleman", text);
 };
