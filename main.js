@@ -5,13 +5,36 @@ keyEvents = [];
 var upTime, downTime;
 
 var over,
-  listening = false;
+  listening = false,
+  first = true,
+  exploded = false;
+
+function explosion() {
+  exploded = true;
+  msg.innerText = "";
+  document.getElementById("explosionAudio").play();
+  view.src = "explosion2.png";
+  setTimeout(function () {
+    view.src = "aftermath.png";
+    setTimeout(function () {
+      text =
+        "Hold up the train. " +
+        "Ammunition ship afire in harbour making for Pier 6 and will explode. " +
+        "Guess this will be my last message. Good-bye, boys.";
+      playMsg("Coleman", proseToMorse(text), 0, false, true);
+    }, 2000);
+  }, 6000);
+}
 
 function press() {
-  if (listening) return;
+  if (listening || exploded) return;
 
-  imgUp.style.display = "none";
-  imgDown.style.display = "";
+  if (first) {
+    setTimeout(explosion, 120_000);
+    first = false;
+  }
+
+  view.src = "down.png";
   clearTimeout(over);
 
   downTime = Date.now();
@@ -21,10 +44,9 @@ function press() {
 }
 
 function release() {
-  if (listening) return;
+  if (listening || exploded) return;
 
-  imgUp.style.display = "";
-  imgDown.style.display = "none";
+  view.src = "up.png";
 
   upTime = Date.now();
   keyEvents.push({ down: true, duration: Date.now() - downTime });
@@ -104,40 +126,51 @@ function generateReply() {
       "QRS PSE K", // "QRS" means "Send more slowly", followed by "PSE" for please
     ]);
   }
-  code = [...text.toLowerCase().replace(/ /g, "/")]
-    .map((x) => encode[x])
-    .join(" ");
 
-  playMsg(code, 0, false);
+  playMsg("Dustan", proseToMorse(text), 0, false, false);
 }
 
-function playMsg(code, i, shortPause) {
+function proseToMorse(text) {
+  return [...text.toLowerCase().replace(/ /g, "/")]
+    .map((x) => encode[x])
+    .join(" ");
+}
+
+function playMsg(callsign, code, i, shortPause, override) {
   char = code[i];
   nextChar = code[i + 1];
 
   stopBeep();
 
+  if (exploded && !override) return;
+
   if (i >= code.length) {
     listening = false;
-    msg.innerText = toEnglish("Dustan", lineText);
+    msg.innerText = toEnglish(callsign, lineText);
     return;
   }
 
   jitter = Math.random(10) - 5;
 
   if (shortPause) {
-    setTimeout(playMsg.bind(this, code, i, false), timing["⋅"] + jitter);
+    setTimeout(
+      playMsg.bind(this, callsign, code, i, false, override),
+      timing["⋅"] + jitter
+    );
   } else if (char === "⋅" || char === "-") {
     lineText += char;
     startBeep();
     shortPause = nextChar === "⋅" || nextChar === "-";
     setTimeout(
-      playMsg.bind(this, code, i + 1, shortPause),
+      playMsg.bind(this, callsign, code, i + 1, shortPause, override),
       timing[char] + jitter
     );
   } else {
     lineText += char;
-    msg.innerText = toEnglish("Dustan", lineText);
-    setTimeout(playMsg.bind(this, code, i + 1, false), timing[char] + jitter);
+    msg.innerText = toEnglish(callsign, lineText);
+    setTimeout(
+      playMsg.bind(this, callsign, code, i + 1, false, override),
+      timing[char] + jitter
+    );
   }
 }
