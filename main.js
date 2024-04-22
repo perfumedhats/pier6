@@ -32,7 +32,7 @@ function explode() {
         "Ammunition ship afire in harbour making for Pier 6 and will explode. " +
         "Guess this will be my last message. Good-bye, boys.";
       state.narration = true;
-      playMsg("Coleman", text);
+      playMsg("The last words of Vincent Coleman, on Dec 6, 1917", text);
     }, 2000);
   }, 6000);
 }
