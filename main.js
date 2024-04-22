@@ -1,4 +1,5 @@
-var practiceMode = false;
+let PRACTICE_MODE = false;
+const RESPONSE_DELAY = 3_000;
 var lineText = "";
 
 keyEvents = [];
@@ -6,14 +7,23 @@ var upTime, downTime;
 
 var over,
   listening = false,
-  first = true,
-  exploded = false;
+  first = true;
 
-function explosion() {
-  exploded = true;
+var state = {
+  started: false,
+  practice: false,
+  stoppedTrain: false,
+  exploded: false,
+  narration: false,
+};
+
+function explode() {
+  if (state.exploded) return;
+
+  state.exploded = true;
   msg.innerText = "";
   document.getElementById("explosionAudio").play();
-  view.src = "explosion2.png";
+  view.src = "explosion.png";
   setTimeout(function () {
     view.src = "aftermath.png";
     setTimeout(function () {
@@ -21,17 +31,18 @@ function explosion() {
         "Hold up the train. " +
         "Ammunition ship afire in harbour making for Pier 6 and will explode. " +
         "Guess this will be my last message. Good-bye, boys.";
-      playMsg("Coleman", proseToMorse(text), 0, false, true);
+      state.narration = true;
+      playMsg("Coleman", text);
     }, 2000);
   }, 6000);
 }
 
 function press() {
-  if (listening || exploded) return;
+  if (listening || state.exploded) return;
 
-  if (first) {
-    setTimeout(explosion, 120_000);
-    first = false;
+  if (state.started) {
+    setTimeout(explode, 120_000);
+    state.started = true;
   }
 
   view.src = "down.png";
@@ -44,7 +55,7 @@ function press() {
 }
 
 function release() {
-  if (listening || exploded) return;
+  if (listening || state.exploded) return;
 
   view.src = "up.png";
 
@@ -52,8 +63,8 @@ function release() {
   keyEvents.push({ down: true, duration: Date.now() - downTime });
 
   stopBeep();
-  if (!practiceMode) {
-    over = setTimeout(generateReply, 3000);
+  if (!PRACTICE_MODE) {
+    over = setTimeout(generateReply, RESPONSE_DELAY);
   }
 
   msg.innerText = translate(keyEvents.slice(1));
@@ -100,12 +111,9 @@ function generateReply() {
   sent.train =
     sent.train || /TRAIN|LOCOMOTIVE|ENGINE|DEPARTURE/.test(normalized);
 
-  listening = true;
-  lineText = "";
-  keyEvents = [];
-
   if (sent.fire && sent.ship && sent.stop && sent.train) {
-    text = "ACK. TRAIN STOPPED. YOU WIN THE GAME";
+    text = "ACK. TRAIN STOPPED.";
+    state.stoppedTrain = true;
   } else if (sent.stop && !sent.train) {
     text = "STOP WHAT?";
   } else if (sent.stop && sent.train && !sent.fire) {
@@ -127,7 +135,7 @@ function generateReply() {
     ]);
   }
 
-  playMsg("Dustan", proseToMorse(text), 0, false, false);
+  playMsg("ROCKINGHAM", text);
 }
 
 function proseToMorse(text) {
@@ -136,25 +144,37 @@ function proseToMorse(text) {
     .join(" ");
 }
 
-function playMsg(callsign, code, i, shortPause, override) {
+function playMsg(callsign, text) {
+  listening = true;
+  lineText = "";
+  keyEvents = [];
+
+  playMsgCallback(callsign, proseToMorse(text), 0, false);
+}
+
+function playMsgCallback(callsign, code, i, shortPause) {
   char = code[i];
   nextChar = code[i + 1];
 
   stopBeep();
 
-  if (exploded && !override) return;
-
   if (i >= code.length) {
     listening = false;
-    msg.innerText = toEnglish(callsign, lineText);
+    msg.innerText = toEnglish(callsign, lineText + " ");
+
+    if (state.stoppedTrain && !state.exploded) {
+      explode();
+    }
     return;
   }
+
+  if (state.exploded && !state.narration) return;
 
   jitter = Math.random(10) - 5;
 
   if (shortPause) {
     setTimeout(
-      playMsg.bind(this, callsign, code, i, false, override),
+      playMsgCallback.bind(this, callsign, code, i, false),
       timing["⋅"] + jitter
     );
   } else if (char === "⋅" || char === "-") {
@@ -162,14 +182,14 @@ function playMsg(callsign, code, i, shortPause, override) {
     startBeep();
     shortPause = nextChar === "⋅" || nextChar === "-";
     setTimeout(
-      playMsg.bind(this, callsign, code, i + 1, shortPause, override),
+      playMsgCallback.bind(this, callsign, code, i + 1, shortPause),
       timing[char] + jitter
     );
   } else {
     lineText += char;
     msg.innerText = toEnglish(callsign, lineText);
     setTimeout(
-      playMsg.bind(this, callsign, code, i + 1, false, override),
+      playMsgCallback.bind(this, callsign, code, i + 1, false),
       timing[char] + jitter
     );
   }
