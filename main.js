@@ -107,7 +107,8 @@ function generateReply() {
     sent.fire || /FIRE|SMOKE|EXPLOSION|FLAME|BLAZE|DANGER/.test(normalized);
   sent.ship = sent.ship || /BOAT|SHIP|VESSEL|BARGE/.test(normalized);
   sent.stop =
-    sent.stop || /STOP|DELAY|PREVENT|ARREST|BLOCK|PREVENT/.test(normalized);
+    sent.stop ||
+    /STOP|DELAY|PREVENT|ARREST|BLOCK|PREVENT|HOLD/.test(normalized);
   sent.train =
     sent.train || /TRAIN|LOCOMOTIVE|ENGINE|DEPARTURE/.test(normalized);
 

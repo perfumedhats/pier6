@@ -16,33 +16,82 @@
     <style>
       html,
       body {
-        margin: 0;
         padding: 0;
         background-color: #4b9fd6;
 
         font-family: "Press Start 2P", system-ui;
         font-weight: 400;
         font-style: normal;
+
+        /* Prevent double-tap from zooming on mobile */
+        /* touch-action: manipulation; */
       }
-      #outer {
+      .outer {
         width: 100%;
         display: flex;
         justify-content: center;
       }
-      /* img.pixel-art {
-        image-rendering: pixelated;
-        height: 100vh;
-      } */
 
-      #msg {
-        padding-top: 20px;
-        font-size: 23px;
+      @media (max-width: 1000px) {
+        body {
+          margin-left: 10px;
+        }
+        .inner {
+          width: 100%;
+        }
+        #title {
+          width: 100%;
+          height: 180px;
+        }
+        #reorderable {
+          width: 100%;
+          display: flex;
+          flex-direction: column-reverse;
+        }
+        #key {
+          column-count: 4;
+          width: 100%;
+          font-size: 35px;
+          padding: 20px 0 0 20px;
+        }
+        #view {
+          width: 100%;
+        }
+        #msg {
+          padding-top: 20px;
+          font-size: 35px;
+        }
       }
-
-      #key {
-        width: 342px;
-        font-size: 25px;
-        padding: 20px 0 0 20px;
+      @media (min-width: 1001px) {
+        body {
+          margin: 0;
+        }
+        .inner {
+          width: 900px;
+        }
+        #title {
+          width: 100%;
+          height: 180px;
+        }
+        #reorderable {
+          display: flex;
+        }
+        #key {
+          column-count: 2;
+          width: 342px;
+          font-size: 25px;
+          padding: 20px 0 0 20px;
+        }
+        #view {
+          width: 560px;
+        }
+        #msg {
+          padding-top: 20px;
+          font-size: 23px;
+        }
+        .filler {
+          display: none;
+        }
       }
     </style>
   </head>
@@ -53,70 +102,46 @@
 
     <link rel="preload" href="up.jpg" as="image" />
     <link rel="preload" href="down.jpg" as="image" />
-    <div id="outer">
-      <div style="width: 900px">
-        <img src="title.png" style="width: 100%; height: 180px" />
+    <div class="outer">
+      <div class="inner">
+        <img id="title" src="title.png" />
+      </div>
+    </div>
+    <div class="outer">
+      <div class="inner">
         <div style="display: flex">
-          <div>
-            <!-- <img src="paper.png" alt="Pixel Art" class="pixel-art" /> -->
-            <img id="view" src="up.png" style="width: 560px" />
-          </div>
-          <div>
-            <table id="key">
-              <tr></tr>
-              <tr>
-                <td>A ⋅-</td>
-                <td>N -⋅</td>
-              </tr>
-              <tr>
-                <td>B -⋅⋅⋅</td>
-                <td>O ---</td>
-              </tr>
-              <tr>
-                <td>C -⋅-⋅</td>
-                <td>P ⋅--⋅</td>
-              </tr>
-              <tr>
-                <td>D -⋅⋅</td>
-                <td>Q --⋅-</td>
-              </tr>
-              <tr>
-                <td>E ⋅</td>
-                <td>R ⋅-⋅</td>
-              </tr>
-              <tr>
-                <td>F ⋅⋅-⋅</td>
-                <td>S ⋅⋅⋅</td>
-              </tr>
-              <tr>
-                <td>G --⋅</td>
-                <td>T -</td>
-              </tr>
-              <tr>
-                <td>H ⋅⋅⋅⋅</td>
-                <td>U ⋅⋅-</td>
-              </tr>
-              <tr>
-                <td>I ⋅⋅</td>
-                <td>V ⋅⋅⋅-</td>
-              </tr>
-              <tr>
-                <td>J ⋅---</td>
-                <td>W ⋅--</td>
-              </tr>
-              <tr>
-                <td>K -⋅-</td>
-                <td>X -⋅⋅-</td>
-              </tr>
-              <tr>
-                <td>L ⋅-⋅⋅</td>
-                <td>Y -⋅--</td>
-              </tr>
-              <tr>
-                <td>M --</td>
-                <td>Z --⋅⋅</td>
-              </tr>
-            </table>
+          <div id="reorderable">
+            <img id="view" src="up.png" />
+            <div id="key">
+              <div>A ⋅-</div>
+              <div>B -⋅⋅⋅</div>
+              <div>C -⋅-⋅</div>
+              <div>D -⋅⋅</div>
+              <div>E ⋅</div>
+              <div>F ⋅⋅-⋅</div>
+              <div>G --⋅</div>
+              <div>H ⋅⋅⋅⋅</div>
+              <div>I ⋅⋅</div>
+              <div>J ⋅---</div>
+              <div>K -⋅-</div>
+              <div>L ⋅-⋅⋅</div>
+              <div>M --</div>
+              <div>N -⋅</div>
+              <div>O ---</div>
+              <div>P ⋅--⋅</div>
+              <div>Q --⋅-</div>
+              <div>R ⋅-⋅</div>
+              <div>S ⋅⋅⋅</div>
+              <div>T -</div>
+              <div>U ⋅⋅-</div>
+              <div>V ⋅⋅⋅-</div>
+              <div>W ⋅--</div>
+              <div>X -⋅⋅-</div>
+              <div>Y -⋅--</div>
+              <div>Z --⋅⋅</div>
+              <div class="filler">&nbsp;</div>
+              <div class="filler">&nbsp;</div>
+            </div>
           </div>
         </div>
         <div id="msg">
