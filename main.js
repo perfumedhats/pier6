@@ -40,7 +40,7 @@ function explode() {
 function press() {
   if (listening || state.exploded) return;
 
-  if (state.started) {
+  if (!state.started) {
     setTimeout(explode, 120_000);
     state.started = true;
   }
@@ -79,13 +79,11 @@ document.addEventListener("keyup", function (event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  document.body.addEventListener("mousedown", function (event) {
-    event.preventDefault();
-    press();
+  document.body.addEventListener("touchstart", function (event) {
+    console.log("start");
   });
-  document.body.addEventListener("mouseup", function (event) {
-    event.preventDefault();
-    release();
+  document.body.addEventListener("touchend", function (event) {
+    console.log("stop");
   });
 });
 
