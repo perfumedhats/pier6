@@ -32,7 +32,14 @@
         justify-content: center;
       }
 
-      @media (max-width: 1000px) {
+      .sidebarButton {
+        text-align: center;
+        padding-top: 17px;
+        cursor: pointer;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      /* @media (max-width: 1000px) {
         body {
           margin-left: 10px;
         }
@@ -61,7 +68,7 @@
           padding-top: 20px;
           font-size: 35px;
         }
-      }
+      } */
       @media (min-width: 1001px) {
         body {
           margin: 0;
@@ -83,7 +90,7 @@
           padding: 20px 0 0 20px;
         }
         #view {
-          width: 560px;
+          width: 490px;
         }
         #msg {
           padding-top: 20px;
@@ -112,35 +119,54 @@
         <div style="display: flex">
           <div id="reorderable">
             <img id="view" src="up.png" />
-            <div id="key">
-              <div>A ⋅-</div>
-              <div>B -⋅⋅⋅</div>
-              <div>C -⋅-⋅</div>
-              <div>D -⋅⋅</div>
-              <div>E ⋅</div>
-              <div>F ⋅⋅-⋅</div>
-              <div>G --⋅</div>
-              <div>H ⋅⋅⋅⋅</div>
-              <div>I ⋅⋅</div>
-              <div>J ⋅---</div>
-              <div>K -⋅-</div>
-              <div>L ⋅-⋅⋅</div>
-              <div>M --</div>
-              <div>N -⋅</div>
-              <div>O ---</div>
-              <div>P ⋅--⋅</div>
-              <div>Q --⋅-</div>
-              <div>R ⋅-⋅</div>
-              <div>S ⋅⋅⋅</div>
-              <div>T -</div>
-              <div>U ⋅⋅-</div>
-              <div>V ⋅⋅⋅-</div>
-              <div>W ⋅--</div>
-              <div>X -⋅⋅-</div>
-              <div>Y -⋅--</div>
-              <div>Z --⋅⋅</div>
-              <div class="filler">&nbsp;</div>
-              <div class="filler">&nbsp;</div>
+            <div>
+              <div
+                id="practiceButton"
+                class="sidebarButton"
+                title="When enabled, the Rockingham station will not send replies"
+                onclick="togglePractice(event)"
+              >
+                Practice Mode OFF
+              </div>
+              <div id="key">
+                <div>A ⋅-</div>
+                <div>B -⋅⋅⋅</div>
+                <div>C -⋅-⋅</div>
+                <div>D -⋅⋅</div>
+                <div>E ⋅</div>
+                <div>F ⋅⋅-⋅</div>
+                <div>G --⋅</div>
+                <div>H ⋅⋅⋅⋅</div>
+                <div>I ⋅⋅</div>
+                <div>J ⋅---</div>
+                <div>K -⋅-</div>
+                <div>L ⋅-⋅⋅</div>
+                <div>M --</div>
+                <div>N -⋅</div>
+                <div>O ---</div>
+                <div>P ⋅--⋅</div>
+                <div>Q --⋅-</div>
+                <div>R ⋅-⋅</div>
+                <div>S ⋅⋅⋅</div>
+                <div>T -</div>
+                <div>U ⋅⋅-</div>
+                <div>V ⋅⋅⋅-</div>
+                <div>W ⋅--</div>
+                <div>X -⋅⋅-</div>
+                <div>Y -⋅--</div>
+                <div>Z --⋅⋅</div>
+                <!-- These are used with the media selectors to support narrow screens
+                <div class="filler">&nbsp;</div>
+                <div class="filler">&nbsp;</div> -->
+              </div>
+              <div
+                id="clearButton"
+                class="sidebarButton"
+                onClick="clearMsg(event)"
+                style="visibility: hidden"
+              >
+                CLEAR
+              </div>
             </div>
           </div>
         </div>
