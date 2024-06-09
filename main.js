@@ -121,6 +121,8 @@ function explode() {
   if (state.exploded) return;
 
   stopBeep();
+  clearTimeout(state.replyTimeout);
+  clearTimeout(state.startReplyTimeout);
 
   state.exploded = true;
   msg.innerText = "";
