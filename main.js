@@ -144,7 +144,9 @@ function explode() {
 }
 
 function startExplosionTimeout() {
-  state.explosionTimeout = setTimeout(explode, TIME_UNTIL_EXPLOSION);
+  if (!state.practice) {
+    state.explosionTimeout = setTimeout(explode, TIME_UNTIL_EXPLOSION);
+  }
 }
 
 function press() {
