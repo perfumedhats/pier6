@@ -1,5 +1,5 @@
 // TODO
-// - Practice mode doesn't work after the explosion
+// - Add a note about the various historical inaccuracies, such as not using railway morse or a sounder
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 // associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -17,21 +17,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 document.addEventListener("DOMContentLoaded", function () {
-  let isMobile = false;
-  (function (a) {
-    if (
-      /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(
-        a
-      ) ||
-      /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(
-        a.substr(0, 4)
-      )
-    )
-      isMobile = true;
-  })(navigator.userAgent || navigator.vendor || window.opera);
-  if (isMobile) {
+  initializeState();
+  if (isMobile()) {
     document.getElementById("msg").innerText =
-      "Dear User,\n\n    Alas! Mobile devices are not yet supported. Oh, fie! A pox on us. Would that they were! Please betake yourself licketty-splicketty to a desktop so as to not deprive yourself of such a singular experience as this. \n\nSincerely,\nYour contrite servant";
+      "Dear User," +
+      "\n\n    Alas! Mobile devices are not yet supported. " +
+      "Oh, fie! A pox on us. Would that they were! " +
+      "Please betake yourself licketty-splicketty to a desktop " +
+      "so as to not deprive yourself of such a singular experience as this. " +
+      "\n\nSincerely," +
+      "\nYour contrite servant";
     state.disabled = true;
   }
 });
@@ -39,42 +34,70 @@ document.addEventListener("DOMContentLoaded", function () {
 const RESPONSE_DELAY = 3_000; // milliseconds
 const TIME_UNTIL_EXPLOSION = 120_000; // milliseconds
 
-var state = {
-  // Used to disable the game when running on a mobile device, as it's too buggy
-  disabled: false,
-
-  lastKeyEvent: null,
-
-  // In listening mode (when an NPC is replying), the user cannot send messages
-  listening: false,
-
-  // The delay between user inputs that triggers a reply
-  startReplyTimeout: null,
-
-  // The timeout used while an NPC is replying
-  replyTimeout: null,
-
-  explosionTimeout: null,
-  started: false,
-  practice: false,
-  stoppedTrain: false,
-  exploded: false,
-  narration: false,
-
-  // The current state of the user's reply
-  msg: {
-    lineText: "",
-    keyEvents: [],
-  },
-
-  // The current state of what the user has told Rockingham
-  sent: {
-    fire: false,
-    ship: false,
-    stop: false,
-    train: false,
-  },
+const VIEWS = {
+  UP: "up.png",
+  DOWN: "down.png",
+  EXPLOSION: "explosion.png",
+  AFTERMATH: "aftermath.png",
 };
+
+var state = {};
+
+function initializeState() {
+  clearTimeout(state.explosionTimeout);
+  clearTimeout(state.startReplyTimeout);
+  clearTimeout(state.replyTimeout);
+
+  state = {
+    // Used to disable the game when running on a mobile device, as it's too buggy
+    disabled: false,
+
+    lastKeyEvent: null,
+
+    // In listening mode (when an NPC is replying), the user cannot send messages
+    listening: false,
+
+    // The delay between user inputs that triggers a reply
+    startReplyTimeout: null,
+
+    // The timeout used while an NPC is replying
+    replyTimeout: null,
+
+    // The main image
+    view: VIEWS.UP,
+
+    explosionTimeout: null,
+    started: false,
+    practice: false,
+    stoppedTrain: false,
+    exploded: false,
+    narration: false,
+
+    // The current state of the user's reply
+    msg: {
+      lineText: "",
+      keyEvents: [],
+    },
+
+    // The current state of what the user has told Rockingham
+    sent: {
+      fire: false,
+      ship: false,
+      stop: false,
+      train: false,
+    },
+  };
+
+  updateView();
+  resetMsg();
+}
+
+function updateView(view) {
+  if (view) {
+    state.view = view;
+  }
+  mainImage.src = state.view;
+}
 
 function resetMsg() {
   state.msg = {
@@ -85,30 +108,26 @@ function resetMsg() {
 }
 
 function togglePractice(e) {
-  e.preventDefault();
-  e.stopPropagation();
-
-  if (state.disabled) {
-    return;
-  }
+  if (state.disabled) return;
 
   stopBeep();
-  state.listening = false;
 
   state.practice = !state.practice;
-  document.getElementById("clearButton").style.visibility = state.practice
-    ? ""
-    : "hidden";
-  document.getElementById("practiceButton").innerText =
-    "Practice Mode " + (state.practice ? "ON" : "OFF");
 
   if (state.practice) {
-    clearTimeout(state.explosionTimeout);
-    clearTimeout(state.startReplyTimeout);
-    clearTimeout(state.replyTimeout);
+    initializeState();
+    // This would have been cleared when the state was reset
+    state.practice = true;
   } else {
     startExplosionTimeout();
   }
+
+  document.getElementById("clearButton").style.visibility = state.practice
+    ? ""
+    : "hidden";
+
+  document.getElementById("practiceButton").innerText =
+    "Practice Mode " + (state.practice ? "ON" : "OFF");
 }
 
 function clearMsg(e) {
@@ -127,18 +146,17 @@ function explode() {
   state.exploded = true;
   msg.innerText = "";
   document.getElementById("explosionAudio").play();
-  view.src = "explosion.png";
+  updateView(VIEWS.EXPLOSION);
   state.replyTimeout = setTimeout(function () {
-    // Show the ruins of Halifax
-    view.src = "aftermath.png";
+    updateView(VIEWS.AFTERMATH);
     state.replyTimeout = setTimeout(function () {
-      // Play Vincent's message
-      text =
-        "Hold up the train. " +
-        "Ammunition ship afire in harbour making for Pier 6 and will explode. " +
-        "Guess this will be my last message. Good-bye, boys.";
       state.narration = true;
-      playMsg("The last words of Vincent Coleman, on Dec 6, 1917", text);
+      playMsg(
+        "The last words of Vincent Coleman, on Dec 6, 1917",
+        "Hold up the train. " +
+          "Ammunition ship afire in harbour making for Pier 6 and will explode. " +
+          "Guess this will be my last message. Good-bye, boys."
+      );
     }, 2000);
   }, 6000);
 }
@@ -157,7 +175,7 @@ function press() {
     state.started = true;
   }
 
-  view.src = "down.png";
+  updateView(VIEWS.DOWN);
   clearTimeout(state.startReplyTimeout);
 
   state.msg.keyEvents.push({
@@ -172,7 +190,7 @@ function press() {
 function release() {
   if (state.disabled || state.listening || state.exploded) return;
 
-  view.src = "up.png";
+  updateView(VIEWS.UP);
 
   state.msg.keyEvents.push({
     down: true,
@@ -189,7 +207,9 @@ function release() {
 }
 
 document.addEventListener("keydown", function (event) {
+  if (event.repeat) return;
   if (event.code === "Space") press();
+  if (event.code === "Backspace" && state.practice) clearMsg(event);
 });
 
 document.addEventListener("keyup", function (event) {
@@ -197,15 +217,11 @@ document.addEventListener("keyup", function (event) {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  document.body.addEventListener("touchstart", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    press();
+  document.body.addEventListener("mousedown", function (event) {
+    if (!event.target.classList.contains("sidebarButton")) press();
   });
-  document.body.addEventListener("touchend", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    release();
+  document.body.addEventListener("mouseup", function (event) {
+    if (!event.target.classList.contains("sidebarButton")) release();
   });
 });
 
@@ -242,7 +258,7 @@ function generateReply() {
   } else {
     text = getRandomElement([
       "GM HLFX, QRM? K",
-      "CFM PSE? QRS? K", // Confirm please, callsign?
+      "CFM PSE? QRS? K", // Confirm please, "Send more slowly"
       "QRU QRU DE CGRD K", // "QRU" means "I have nothing for you; do you have anything for me?" repeated for emphasis, followed by "DE CGRD" indicating "from the hypothetical call sign for the CGR depot
       "QRM PSE AGN K", // "QRM" indicates that there is interference ("Please repeat your message"), "PSE" (please), "AGN" (again), and "K" to end the request
       "QRP? DE CGRD K", // "QRP" asks "Should I decrease transmitter power?" and "DE GD" indicates the station's identifier,
