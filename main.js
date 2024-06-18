@@ -28,6 +28,10 @@ document.addEventListener("DOMContentLoaded", function () {
       "\n\nSincerely," +
       "\nYour contrite servant";
     state.disabled = true;
+  } else {
+    document.getElementById("msg").innerText =
+      "The SS Mont-Blanc is about to explode! Use your telegraph (space bar) " +
+      "to warn Rockingham Station and stop the train!";
   }
 });
 
