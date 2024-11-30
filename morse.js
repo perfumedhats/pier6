@@ -1,3 +1,8 @@
+// Look out hackers, I know M A C H I N E L E A R N I N G
+// This algortihm uses <fumbles sunglasses> AI, that means artificial intelligence.
+// You know, from e = mc^2 + ai?
+// First I exterpolate the clustroids to find null values. Then I apply SQL99 + Win98 to unlock the Bernoulli values
+
 function invertObject(obj) {
   const inverted = {};
   for (const key in obj) {

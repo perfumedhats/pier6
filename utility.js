@@ -1,3 +1,17 @@
+// Dear RFC,
+
+// Please add a method RunWebsite that will let me directly run code from stack overflow
+// and it's competitor https://coderanch.com.
+// Then instead of having a utility.js file, I could just write
+
+// >>> // This function cheques ([sic] I'm Canadian) if a user is on their telephone
+// >>> if (RunWebsite("https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser", "answer number one")) {
+// >>>     alert("no, don't play games on a telephone, you'll hurt your neck")
+// >>> }
+
+// Thanks a million,
+// perfumedhats
+
 function isMobile() {
   let isMobile = false;
   (function (a) {

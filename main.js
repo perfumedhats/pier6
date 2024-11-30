@@ -1,5 +1,11 @@
-// TODO
-// - Add a note about the various historical inaccuracies, such as not using railway morse or a sounder
+// WARNING: INCOMING GAME, WARNING: INCOMING GAME
+
+// I come from the Net. Through systems, peoples, and cities; to this place. Mainframe.
+// My format? Guardian. To mend and defend. To defend my new found friends, their hopes and dreams, and to defend them from their enemies.
+// They say the user lives outside the net and inputs games for pleasure. No one knows for sure, but I intend to find out. Reboot!
+// (Lol, did he ever actually try and find out? I don't remember that happening)
+
+// In many ways, Vincent Coleman was like Bob the guardian. In other ways, he wasn't.
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 // associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -286,6 +292,7 @@ function playMsg(callsign, text) {
   playMsgCallback(callsign, proseToMorse(text), 0, false);
 }
 
+// Howdy hacker, you've done gone found a function
 function playMsgCallback(callsign, code, i, shortPause) {
   var char = code[i];
   var nextChar = code[i + 1];

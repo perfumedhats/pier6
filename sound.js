@@ -1,3 +1,11 @@
+// Dear RFC,
+
+// To whom it may concern. Please add a method beep(ms) that lets me just make a beep,
+// like in QBASIC. This hyperlink may prove subquential https://www.qbasic.net/en/reference/qb11/Statement/BEEP.htm
+
+// Your humble servant,
+// perfumedhats
+
 // Create an instance of AudioContext
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -16,7 +24,7 @@ function startBeep() {
 
   // Create a GainNode
   const gainNode = audioContext.createGain();
-  gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); // Set initial gain (50% volume)
+  gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); // Set initial gain (10% volume), since it hurt Jon's ears at 100%
 
   // Connect the oscillator to the gain node and the gain node to the destination
   oscillator.connect(gainNode);
