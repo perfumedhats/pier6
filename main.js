@@ -265,6 +265,8 @@ function generateReply() {
     text = "WHAT ABOUT THIS SHIP?";
   } else if (sent.ship && sent.fire) {
     text = "PSE ADVISE ON ACTION";
+  } else if (sent.train) {
+    text = "WHAT ABOUT THIS TRAIN?";
   } else {
     text = getRandomElement([
       "GM HLFX, QRM? K",

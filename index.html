@@ -38,7 +38,7 @@ This website was made by the AFTER SCHOOL HTML CLUB copyright 1999, excluding th
         justify-content: center;
       }
 
-      .sidebarButton {
+      .menuRegion {
         text-align: center;
         padding-top: 17px;
         cursor: pointer;
@@ -126,14 +126,18 @@ This website was made by the AFTER SCHOOL HTML CLUB copyright 1999, excluding th
           <div id="reorderable">
             <img id="mainImage" src="up.png" />
             <div>
-              <div
-                id="practiceButton"
-                class="sidebarButton"
-                title="When enabled, the Rockingham station will not send replies"
-                onclick="togglePractice(event)"
-              >
-                Practice Mode OFF
-              </div>
+              <div class="menuRegion" style="padding-left:10px">
+                <span
+                  id="practiceButton"
+                  class="sidebarButton"
+                  title="When enabled, the Rockingham station will not send replies"
+                  onclick="togglePractice(event)"
+                >
+                  Practice Mode OFF
+                </span>
+                <span>|</span>
+                <a class="sidebarButton" href="more.html" title="What the heck?" style="white-space: pre"> ? </a>
+            </div>
               <div id="key">
                 <div>A ⋅-</div>
                 <div>B -⋅⋅⋅</div>
@@ -167,7 +171,7 @@ This website was made by the AFTER SCHOOL HTML CLUB copyright 1999, excluding th
               </div>
               <div
                 id="clearButton"
-                class="sidebarButton"
+                class="menuRegion sidebarButton"
                 onClick="clearMsg(event)"
                 style="visibility: hidden"
               >
